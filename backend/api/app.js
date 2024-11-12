@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { connectDB, syncDB } = require('./db_config/db');
 const cookieParser = require('cookie-parser');
+const router = require('./routes');
 
 
 // Initialize Express app
@@ -16,5 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+router(app);
 
 module.exports = app;
