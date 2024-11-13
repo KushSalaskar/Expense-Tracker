@@ -4,7 +4,6 @@ const { connectDB, syncDB } = require('./db_config/db');
 const cookieParser = require('cookie-parser');
 const router = require('./routes');
 
-
 // Initialize Express app
 const app = express();
 

@@ -3,8 +3,8 @@ const Sequelize = require('sequelize');
 
 const User = db.define('users', {
     id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUID,
+        type: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true
 
     },
@@ -22,12 +22,14 @@ const User = db.define('users', {
     lastName: {
         type: Sequelize.STRING
     },
-    created_at: {
-        type: Sequelize.DATE
-    },
-    updated_at: {
-        type: Sequelize.DATE
-    },
+    // created_at: {
+    //     type: Sequelize.DATE
+    // },
+    // updated_at: {
+    //     type: Sequelize.DATE
+    // },
+}, {
+    timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 })
