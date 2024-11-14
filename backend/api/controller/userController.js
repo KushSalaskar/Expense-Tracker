@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { signUpUser, checkExistingUser, getUserWithId } = require("../utils/userUtils");
+const { signUpUser, checkExistingUser, getUserWithId, updateUserById } = require("../utils/userUtils");
 const bcrypt = require("bcryptjs");
 const { set } = require("../app");
 
@@ -91,8 +91,43 @@ const getUser = async (req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Check the validators array from basic validators
+        const validatorErrs = validationResult(req)
+        if (!validatorErrs.isEmpty()) {
+            return errorHandler(res, validatorErrs, 400);
+        }
+
+        if (req.body.id || req.body.created_at || req.body.updated_at || req.body.createdAt || req.body.updatedAt) {
+            return errorHandler(res, `Cannot enter the fields <id, created_at, createdAt, updated_at, updatedAt> through this API`, 400);
+        }
+
+        // Check if the user exists
+        let user = await getUserWithId(id);
+        if (user === null) {
+            return errorHandler(res, `Could not find user with id: ${id}`, 404);
+        }
+
+        const newUser = {};
+        newUser.firstName = req.body.firstName;
+        newUser.lastName = req.body.lastName;
+        newUser.username = req.body.username;
+        newUser.password = bcrypt.hashSync(req.body.password, 10)
+
+        await updateUserById(id, newUser);
+        setSuccessMessage(res, "", 204);
+    } catch (error) {
+        console.log(`userController::updateUser error: ${error}`);
+        return errorHandler(res, `Encountered problem while updating user: ${req.params.id}`, 400);
+    }
+}
+
 module.exports = {
     signUp,
     getUserbyId,
     getUser,
+    updateUser,
 }

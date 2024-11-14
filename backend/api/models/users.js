@@ -22,6 +22,12 @@ const User = db.define('users', {
     lastName: {
         type: Sequelize.STRING
     },
+    created_at: {
+        type: Sequelize.DATE
+    },
+    updated_at: {
+        type: Sequelize.DATE
+    }
 }, {
     timestamps: true,
     createdAt: 'created_at',

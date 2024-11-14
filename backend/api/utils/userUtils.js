@@ -20,8 +20,29 @@ const getUserWithId = async (id) => {
     }
 }
 
+// Update user by id
+const updateUserById = async (id, user) => {
+    try {
+        return await User.update({
+            updated_at: new Date(),
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+            password: user.password,
+        }, {
+            where: {
+                id: id
+            }
+        })
+    } catch (error) {
+        console.log(`Could not update user by id: ${id}`);
+        return null
+    }
+}
+
 module.exports = {
     signUpUser,
     checkExistingUser,
     getUserWithId,
+    updateUserById,
 }
