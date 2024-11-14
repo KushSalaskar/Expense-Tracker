@@ -13,4 +13,10 @@ router.route('/')
         userController.signUp
     )
 
+router.route('/:username')
+    .get(
+        // add auth later
+        userController.getUser
+    )
+
 module.exports = router

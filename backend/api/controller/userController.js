@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { signUpUser, checkExistingUser } = require("../utils/userUtils");
+const { signUpUser, checkExistingUser, getUserWithId } = require("../utils/userUtils");
 const bcrypt = require("bcryptjs");
 const { set } = require("../app");
 
@@ -46,11 +46,53 @@ const signUp = async (req, res) => {
         setSuccessMessage(res, userResp);
 
     } catch (error) {
-        console.log(`Encountered problem when signing up user: ${error}`);
-        return errorHandler(res, `userController::signUp error: ${error}`, 400);
+        console.log(`userController::signUp error: ${error}`);
+        return errorHandler(res, `Encountered problem when signing up user: ${error}`, 400);
+    }
+}
+
+const getUserbyId = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Check if the user exists
+        let user = await getUserWithId(id);
+        if (user === null) {
+            return errorHandler(res, `Could not find user with id: ${id}`, 404);
+        }
+
+        const userData = user.toJSON();
+        // Return user without password
+        let {password, ...currentUser} = {...userData};
+        setSuccessMessage(res, currentUser, 200);
+    } catch (error) {
+        console.log(`userController::getUserbyId error: ${error}`);
+        return errorHandler(res, `Encountered problem while getting user with id: ${req.params.id}`, 400);
+    }
+}
+
+const getUser = async (req, res) => {
+    try {
+        const username = req.params.username;
+
+        // Check if the user exists
+        let user = await checkExistingUser(username);
+        if (user === null) {
+            return errorHandler(res, `Could not find user with username: ${username}`, 404);
+        }
+
+        const userData = user.toJSON();
+        // Return user without password
+        let {password, id, ...currentUser} = {...userData};
+        setSuccessMessage(res, currentUser, 200);
+    } catch (error) {
+        console.log(`userController::getUser error: ${error}`);
+        return errorHandler(res, `Encountered problem while getting user with username: ${req.params.username}`, 400);
     }
 }
 
 module.exports = {
-    signUp
+    signUp,
+    getUserbyId,
+    getUser,
 }
